@@ -1,14 +1,11 @@
 import {getEditFormMarkup} from './edit-form';
 import {getAddFormMarkup} from './add-form';
-import {getTripEventItem} from './trip-event-item';
+import {getTripEventItemMarkup} from './trip-event-item';
 
-
-export const getContentMarkup = () => {
+export const getContentMarkup = (tripEvents) => {
   return `<ul class="trip-events__list">
             ${getEditFormMarkup()}
-            ${getTripEventItem()}
-            ${getTripEventItem()}
-            ${getTripEventItem()}
+            ${tripEvents.map((tripEvent) => getTripEventItemMarkup(tripEvent)).join(``)}
             ${getAddFormMarkup()}
     </ul>`;
 };

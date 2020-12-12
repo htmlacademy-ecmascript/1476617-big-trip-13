@@ -1,34 +1,42 @@
-export const getTripEventItem = () => {
+const getTimeDifference = (minutes) => {
+  return `${Math.floor(minutes / 60)}H ${minutes % 60}M`;
+};
+
+export const getTripEventItemMarkup = ({
+  type,
+  destination,
+  price,
+  description,
+  photos,
+  startDate,
+  endDate,
+  offers
+}) => {
   return `<li class="trip-events__item">
               <div class="event">
-                <time class="event__date" datetime="2019-03-18">MAR 18</time>
+                <time class="event__date" datetime="2019-03-18">${startDate.format(`MMM D`)}</time>
                 <div class="event__type">
-                  <img class="event__type-icon" width="42" height="42" src="img/icons/flight.png" alt="Event type icon">
+                  <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="${type}icon">
                 </div>
-                <h3 class="event__title">Flight Chamonix</h3>
+                <h3 class="event__title">${type} ${destination}</h3>
                 <div class="event__schedule">
                   <p class="event__time">
-                    <time class="event__start-time" datetime="2019-03-18T12:25">12:25</time>
+                    <time class="event__start-time" datetime="${startDate.toDate()}">${startDate.format(`HH:mm`)}</time>
                     &mdash;
-                    <time class="event__end-time" datetime="2019-03-18T13:35">13:35</time>
+                    <time class="event__end-time" datetime="${endDate.toDate()}">${endDate.format(`HH:mm`)}</time>
                   </p>
-                  <p class="event__duration">1H 10M</p>
+                  <p class="event__duration">${getTimeDifference(endDate.diff(startDate, `m`))}</p>
                 </div>
                 <p class="event__price">
-                  &euro;&nbsp;<span class="event__price-value">160</span>
+                  &euro;&nbsp;<span class="event__price-value">${price}</span>
                 </p>
                 <h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
-                  <li class="event__offer">
-                    <span class="event__offer-title">Add luggage</span>
+                  ${offers.map((offer) => `<li class="event__offer">
+                    <span class="event__offer-title">${offer.title}</span>
                     &plus;&euro;&nbsp;
-                    <span class="event__offer-price">50</span>
-                  </li>
-                  <li class="event__offer">
-                    <span class="event__offer-title">Switch to comfort</span>
-                    &plus;&euro;&nbsp;
-                    <span class="event__offer-price">80</span>
-                  </li>
+                    <span class="event__offer-price">${offer.price}</span>
+                  </li>`).join(``)}
                 </ul>
                 <button class="event__favorite-btn" type="button">
                   <span class="visually-hidden">Add to favorite</span>

@@ -24,6 +24,8 @@ const RANDOM_PHOTO_BASE_URL = `http://picsum.photos/248/152?r=`;
 const RANDOM_PHOTO_MIN_INTEGER = 1;
 const RANDOM_PHOTO_MAX_INTEGER = 1000000;
 
+const minutesNow = dayjs().minute();
+
 const getRandomPrice = (minPrice, maxPrice) => {
   return Math.round(getRandomInteger(minPrice, maxPrice) / PRICE_STEP) * PRICE_STEP;
 };
@@ -42,7 +44,11 @@ const generateOffer = () => {
 
 const generateOffers = () => {
   const offersAmount = getRandomInteger(MIN_OFFER_AMOUNT, MAX_OFFERS_AMOUNT);
-  return new Array(offersAmount).fill().map(generateOffer);
+  return (new Array(offersAmount)
+    .fill()
+    .map(generateOffer))
+    // not the best one, I know
+    .filter((offer, i, offers) => !offers.slice(i + 1).find((anotherOffer) => offer.title === anotherOffer.title));
 };
 
 const generateDescription = () => {
@@ -63,7 +69,8 @@ const getRandomDates = () => {
   const timeAfterNow = getRandomInteger(MIN_EVENT_START_AFTER_NOW, MAX_EVENT_START_AFTER_NOW);
   const eventDuration = getRandomDuration();
 
-  const startDate = dayjs().add(timeAfterNow, `hours`);
+  // subtracting minutesNow basically rounds minutes to either 0 or 5 depending on event duration
+  const startDate = dayjs().add(timeAfterNow, `hours`).subtract(minutesNow, `minutes`);
   const endDate = startDate.add(eventDuration, `minute`);
   return {
     startDate,
