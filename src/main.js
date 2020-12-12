@@ -1,8 +1,20 @@
+import {generateTripEventItem} from './mock/generate-trip-event-item';
+
+import {getRandomInteger} from './utils';
+
 import {getTripInfoMarkup} from './view/trip-info';
 import {getMenuMarkup} from './view/menu';
 import {getFiltersMarkup} from './view/filters';
 import {getSortMarkup} from './view/sort';
 import {getContentMarkup} from './view/content';
+
+const MIN_EVENTS_AMOUNT = 15;
+const MAX_EVENTS_AMOUNT = 20;
+
+const generateTripEvents = () => {
+  const eventsAmount = getRandomInteger(MIN_EVENTS_AMOUNT, MAX_EVENTS_AMOUNT);
+  return new Array(eventsAmount).fill().map(generateTripEventItem);
+};
 
 const render = (container, HTMLMarkup, position) => {
   container.insertAdjacentHTML(position, HTMLMarkup);
