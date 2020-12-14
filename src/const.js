@@ -39,12 +39,12 @@ export const DESCRIPTIONS = [
   `Nunc fermentum tortor ac porta dapibus.In rutrum ac purus sit amet tempus.`
 ];
 
-export const OFFER_TYPES = [
-  `Order Uber`,
-  `Add luggage`,
-  `Switch to comfort`,
-  `Rent a car`,
-  `Add breakfast`,
-  `Book tickets`,
-  `Lunch in city`,
-];
+export const OFFER_TYPES = {
+  taxi: `Order Uber`,
+  luggage: `Add luggage`,
+  comfort: `Switch to comfort`,
+  car: `Rent a car`,
+  breakfast: `Add breakfast`,
+  tickets: `Book tickets`,
+  lunch: `Lunch in city`,
+};

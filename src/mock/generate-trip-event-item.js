@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 
 import {getRandomInteger, getRandomArrayItem} from '../utils';
-import {TRIP_EVENT_TYPES, DESTINATIONS, DESCRIPTIONS, OFFER_TYPES} from './const';
+import {TRIP_EVENT_TYPES, DESTINATIONS, DESCRIPTIONS, OFFER_TYPES} from '../const';
 
 const MIN_EVENT_START_AFTER_NOW = 24;
 const MAX_EVENT_START_AFTER_NOW = 3600;
@@ -32,13 +32,16 @@ const getRandomPrice = (minPrice, maxPrice) => {
 
 const generateOffer = () => {
   const type = getRandomArrayItem(TRIP_EVENT_TYPES);
-  const title = getRandomArrayItem(OFFER_TYPES);
+  const [name, title] = getRandomArrayItem(Object.entries(OFFER_TYPES));
   const price = getRandomPrice(MIN_OFFER_PRICE, MAX_OFFER_PRICE);
+  const isSelected = Boolean(getRandomInteger(0, 1));
 
   return {
     type,
+    name,
     title,
     price,
+    isSelected,
   };
 };
 
@@ -47,7 +50,6 @@ const generateOffers = () => {
   return (new Array(offersAmount)
     .fill()
     .map(generateOffer))
-    // not the best one, I know
     .filter((offer, i, offers) => !offers.slice(i + 1).find((anotherOffer) => offer.title === anotherOffer.title));
 };
 
@@ -63,6 +65,10 @@ const getRandomPhotos = () => {
 
 const getRandomDuration = () => {
   return Math.round(getRandomInteger(MIN_EVENT_DURATION, MAX_EVENT_DURATION) / EVENT_DURATION_STEP) * EVENT_DURATION_STEP;
+};
+
+const getIsFavourite = () => {
+  return Boolean(getRandomInteger(0, 1));
 };
 
 const getRandomDates = () => {
@@ -86,6 +92,7 @@ export const generateTripEventItem = () => {
   const photos = getRandomPhotos();
   const {startDate, endDate} = getRandomDates();
   const offers = generateOffers();
+  const isFavourite = getIsFavourite();
 
   return {
     type,
@@ -96,5 +103,6 @@ export const generateTripEventItem = () => {
     startDate,
     endDate,
     offers,
+    isFavourite
   };
 };
