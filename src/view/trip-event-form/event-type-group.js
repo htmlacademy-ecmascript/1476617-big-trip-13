@@ -1,9 +1,16 @@
+import {createElement} from '../../utils';
 import {TRIP_EVENT_TYPES} from '../../const';
 
-export const getTripEventTypeGroupMarkup = ({type}) => {
-  const lowerCaseSelectedTripEventType = type.toLowerCase();
+export default class TripEventTypeGroup {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
 
-  return `<div class="event__type-wrapper">
+  getTemplate({type}) {
+    const lowerCaseSelectedTripEventType = type.toLowerCase();
+
+    return `<div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="${type} icon">
@@ -25,4 +32,17 @@ export const getTripEventTypeGroupMarkup = ({type}) => {
               </fieldset>
             </div>
           </div>`;
-};
+  }
+
+  getElement() {
+    if (!this._element) {
+      const {type} = this._event;
+      this._element = createElement(this.getTemplate({type}));
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
