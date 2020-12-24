@@ -28,7 +28,7 @@ export default class TripEventDetails {
   }
 
   getElement() {
-    if (!this.element) {
+    if (!this._element) {
       const {description, photos, offers} = this._tripEventDetails;
 
       const tripEventDetails = createElement(this.getTemplate({description, photos}));
@@ -38,7 +38,7 @@ export default class TripEventDetails {
       offersContainer.append(...offers.map((offer) => new Offer(offer).getElement()));
 
       render(tripEventDetails.querySelector(`.event__section--offers`), RenderPosition.BEFOREEND, offersContainer);
-
+      fdfs;
       this._element = tripEventDetails;
     }
     return this._element;

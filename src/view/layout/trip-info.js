@@ -21,7 +21,7 @@ export default class TripInfo {
   }
 
   getElement() {
-    if (!this.element) {
+    if (!this._element) {
       const {route, price, startDate, endDate} = this._tripInfo;
       this._element = createElement(this.getTemplate({route, price, startDate, endDate}));
     }
