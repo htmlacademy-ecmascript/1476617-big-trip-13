@@ -18,7 +18,11 @@ export default class TripEventForm {
                <header class="event__header">
 
                  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                 <button class="event__reset-btn" type="reset">Cancel</button>
+                 <button class="event__reset-btn" type="reset">Delete</button>
+
+                 <button class="event__rollup-btn" type="button">
+                    <span class="visually-hidden">Open event</span>
+                  </button>
 
                </header>
              </form>
@@ -41,6 +45,8 @@ export default class TripEventForm {
 
       tripEventForm.addEventListener(`submit`, this._unsetItemEditedHandler);
       tripEventForm.addEventListener(`reset`, this._unsetItemEditedHandler);
+      tripEventForm.querySelector(`.event__rollup-btn`).addEventListener(`click`, this._unsetItemEditedHandler);
+
       this._element = tripEventForm;
     }
 
