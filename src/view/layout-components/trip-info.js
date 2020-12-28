@@ -1,12 +1,13 @@
-import {createElement} from '../../utils';
+import AbstractComponent from '../abstract-component';
 
-export default class TripInfo {
+export default class TripInfo extends AbstractComponent {
   constructor(tripInfo) {
+    super();
     this._tripInfo = tripInfo;
-    this._element = null;
   }
 
-  getTemplate({route, price, startDate, endDate}) {
+  getTemplate() {
+    const {route, price, startDate, endDate} = this._tripInfo;
     return `<section class="trip-main__trip-info  trip-info">
             <div class="trip-info__main">
               <h1 class="trip-info__title">${route.join(` &mdash; `)}</h1>
@@ -18,17 +19,5 @@ export default class TripInfo {
               Total: &euro;&nbsp;<span class="trip-info__cost-value">${price}</span>
             </p>
           </section>`;
-  }
-
-  getElement() {
-    if (!this._element) {
-      const {route, price, startDate, endDate} = this._tripInfo;
-      this._element = createElement(this.getTemplate({route, price, startDate, endDate}));
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

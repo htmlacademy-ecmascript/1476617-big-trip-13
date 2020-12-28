@@ -1,12 +1,13 @@
-import {createElement} from '../../utils';
+import AbstractComponent from '../abstract-component';
 
-export default class TripEventPriceFieldGroup {
+export default class TripEventPriceFieldGroup extends AbstractComponent {
   constructor(price) {
+    super();
     this._price = price;
-    this._element = null;
   }
 
-  getTemplate({price}) {
+  getTemplate() {
+    const {price} = this._price;
     return `<div class="event__field-group  event__field-group--price">
              <label class="event__label" for="event-price-1">
                <span class="visually-hidden">Price</span>
@@ -14,18 +15,5 @@ export default class TripEventPriceFieldGroup {
              </label>
              <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}"></input>
            </div>`;
-  }
-
-  getElement() {
-    if (!this._element) {
-      const {price} = this._price;
-      this._element = createElement(this.getTemplate({price}));
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

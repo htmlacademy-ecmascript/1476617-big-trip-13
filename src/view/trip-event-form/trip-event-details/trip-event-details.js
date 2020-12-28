@@ -1,17 +1,21 @@
-import {createElement, render, RenderPosition} from '../../../utils';
+import AbstractComponent from '../../abstract-component';
 
 import Offer from './offer';
 
-export default class TripEventDetails {
+export default class TripEventDetails extends AbstractComponent {
   constructor(tripEventDetails) {
+    super();
     this._tripEventDetails = tripEventDetails;
-    this._element = null;
   }
 
-  getTemplate({description, photos}) {
+  getTemplate() {
+    const {description, photos, offers} = this._tripEventDetails;
     return `<section class="event__details">
              <section class="event__section  event__section--offers">
                <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+               <div class="event__available-offers">
+                 ${offers.map((offer) => new Offer(offer).getTemplate()).join(``)}
+               </div>
              </section>
 
              <section class="event__section  event__section--destination">
@@ -25,26 +29,5 @@ export default class TripEventDetails {
                </div>
              </section>
            </section>`;
-  }
-
-  getElement() {
-    if (!this._element) {
-      const {description, photos, offers} = this._tripEventDetails;
-
-      const tripEventDetails = createElement(this.getTemplate({description, photos}));
-
-      const offersContainer = document.createElement(`div`);
-      offersContainer.className = `event__available-offers`;
-      offersContainer.append(...offers.map((offer) => new Offer(offer).getElement()));
-
-      render(tripEventDetails.querySelector(`.event__section--offers`), RenderPosition.BEFOREEND, offersContainer);
-      fdfs;
-      this._element = tripEventDetails;
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

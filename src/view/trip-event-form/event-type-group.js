@@ -1,13 +1,14 @@
-import {createElement} from '../../utils';
 import {TRIP_EVENT_TYPES} from '../../const';
+import AbstractComponent from '../abstract-component';
 
-export default class TripEventTypeGroup {
+export default class TripEventTypeGroup extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
-  getTemplate({type}) {
+  getTemplate() {
+    const {type} = this._event;
     const lowerCaseSelectedTripEventType = type.toLowerCase();
 
     return `<div class="event__type-wrapper">
@@ -32,17 +33,5 @@ export default class TripEventTypeGroup {
               </fieldset>
             </div>
           </div>`;
-  }
-
-  getElement() {
-    if (!this._element) {
-      const {type} = this._event;
-      this._element = createElement(this.getTemplate({type}));
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,19 +1,21 @@
-import {createElement, render, RenderPosition} from '../../utils';
+import AbstractComponent from '../abstract-component';
 
 import OffersList from './offers-list';
 import EventSchedule from './event-schedule';
 import EventPrice from './price';
 import AddToFavouritesButton from './add-to-favourites-button';
-import EditEventButton from './edit-event-button';
 
-export default class TripEventItem {
-  constructor({tripEvent, setItemEditedHandler}) {
+export default class TripEventItem extends AbstractComponent {
+  constructor({tripEvent}) {
+    super();
     this._tripEvent = tripEvent;
-    this._element = null;
-    this._setItemEditedHandler = setItemEditedHandler;
   }
 
-  getTemplate({type, destination, startDateFormatted, lowerCaseType}) {
+  getTemplate() {
+    const {type, destination, price, startDate, endDate, offers, isFavourite} = this._tripEvent;
+    const isFavouriteClassName = isFavourite ? `event__favorite-btn--active` : ``;
+    const startDateFormatted = startDate.format(`MMM D`);
+    const lowerCaseType = type.toLowerCase();
 
     return `<li class="trip-events__item">
               <div class="event">
@@ -26,37 +28,24 @@ export default class TripEventItem {
 
                 <h3 class="event__title">${type} ${destination}</h3>
 
+                ${new EventSchedule({startDate, endDate}).getTemplate()}
+                ${new EventPrice({price}).getTemplate()}
+
+                <h4 class="visually-hidden">Offers:</h4>
+
+                ${new OffersList({offers}).getTemplate()}
+                ${new AddToFavouritesButton({isFavouriteClassName}).getTemplate()}
+
+                <button class="event__rollup-btn" type="button">
+                  <span class="visually-hidden">Open event</span>
+                </button>
+
               </div>
             </li>`;
   }
 
-  getElement() {
-    if (!this._element) {
-      const {type, destination, price, startDate, endDate, offers, isFavourite} = this._tripEvent;
-      const setItemEditedHandler = this._setItemEditedHandler;
-
-      const isFavouriteClassName = isFavourite ? `event__favorite-btn--active` : ``;
-      const startDateFormatted = startDate.format(`MMM D`);
-      const lowerCaseType = type.toLowerCase();
-
-      const tripEvent = createElement(this.getTemplate({type, destination, startDateFormatted, lowerCaseType, isFavouriteClassName}));
-
-      const eventSchedule = new EventSchedule({startDate, endDate}).getElement();
-      const eventPrice = new EventPrice({price}).getElement();
-      const offersHeading = createElement(`<h4 class="visually-hidden">Offers:</h4>`);
-      const offersList = new OffersList({offers}).getElement();
-      const addToFavouritesButton = new AddToFavouritesButton({isFavouriteClassName}).getElement();
-      const editEventButton = new EditEventButton({setItemEditedHandler}).getElement();
-
-      render(tripEvent.querySelector(`.event`), RenderPosition.BEFOREEND, eventSchedule, eventPrice, offersHeading, offersList, addToFavouritesButton, editEventButton);
-
-      this._element = tripEvent;
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setSetItemEditedListener(cb) {
+    this._callback.setItemEdited = cb;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => console.log(`button clicked`));
   }
 }

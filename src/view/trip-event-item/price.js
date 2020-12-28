@@ -1,26 +1,15 @@
-import {createElement} from '../../utils';
+import AbstractComponent from '../abstract-component';
 
-export default class EventPrice {
+export default class EventPrice extends AbstractComponent {
   constructor({price}) {
-    this._element = null;
+    super();
     this._price = price;
   }
 
-  getTemplate({price}) {
+  getTemplate() {
+    const price = this._price;
     return `<p class="event__price">
              &euro;&nbsp;<span class="event__price-value">${price}</span>
            </p>`;
-  }
-
-  getElement() {
-    if (!this._element) {
-      const price = this._price;
-      this._element = createElement(this.getTemplate({price}));
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

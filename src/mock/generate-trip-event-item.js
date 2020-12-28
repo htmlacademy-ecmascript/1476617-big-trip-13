@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import {getRandomInteger, getRandomArrayItem} from '../utils';
+import {getRandomInteger, getRandomArrayItem} from '../utils/common';
 import {TRIP_EVENT_TYPES, DESTINATIONS, DESCRIPTIONS, OFFER_TYPES} from '../const';
 
 const MIN_EVENT_START_AFTER_NOW = 24;

@@ -1,14 +1,16 @@
-import {render, RenderPosition} from "./utils";
+import {render, RenderPosition} from "./utils/render";
 
 import {generateTripEventItem} from "./mock/generate-trip-event-item";
 
-import {getRandomInteger} from "./utils";
+import {getRandomInteger} from "./utils/common";
 
-import TripInfo from "./view/layout/trip-info";
-import Menu from "./view/layout/menu";
-import Filters from "./view/layout/filters";
-import Sort from "./view/layout/sort";
-import EventsList from "./view/layout/events-list";
+import TripInfo from "./view/layout-components/trip-info";
+import TripEventItem from "./view/trip-event-item/event-item";
+import TripEventForm from "./view/trip-event-form/form";
+import Menu from "./view/layout-components/menu";
+import Filters from "./view/layout-components/filters";
+import Sort from "./view/layout-components/sort";
+import EventsList from "./view/layout-components/events-list";
 
 const MIN_EVENTS_AMOUNT = 15;
 const MAX_EVENTS_AMOUNT = 20;
@@ -57,10 +59,48 @@ const tripInfo = {
   endDate: getEndDate(tripEvents),
 };
 
-render(aboutTripContainer, RenderPosition.AFTERBEGIN, new TripInfo(tripInfo).getElement());
+const renderEventsList = (eventsData) => {
+  const eventsList = new EventsList(eventsData);
+
+  const onEscKeyDownHandler = (function (evt) {
+    const editedItemIndex = this.getEditedItemIndex();
+    if (editedItemIndex !== null && evt.key === `Esc` || evt.key === `Escape`) {
+      this.unsetItemEditedHandler(editedItemIndex);
+    }
+  }).bind(eventsList);
+
+  const setItemEdited = (function (index) {
+    if (this._editedItemIndex !== null) {
+      this._callback.unsetItemEdited(this._editedItemIndex);
+    }
+
+    this._editedItemIndex = index;
+    const oldElement = this._element.children[index];
+    const newElement = new TripEventForm({tripEvent: this._tripEvents[index]}).getElement();
+    const unsetItemEditedHandler = () => {
+      this._callback.unsetItemEdited(index);
+    };
+    newElement.setUnsetItemEditedHandler(unsetItemEditedHandler);
+    this._element.replaceChild(newElement, oldElement);
+    console.log({newElement, oldElement});
+  }).bind(eventsList);
+
+  const unsetItemEdited = (function (index) {
+    const oldElement = this._element.children[index];
+    const newElement = new TripEventItem({tripEvent: this._tripEvents[index], setItemEdited: () => this._callback.setItemEdited(index)}).getElement();
+    this._element.replaceChild(newElement, oldElement);
+  }).bind(eventsList);
+
+  eventsList.setOnEscKeydownHandler(onEscKeyDownHandler);
+  eventsList.setSetItemEdited(setItemEdited);
+  eventsList.setUnsetItemEdited(unsetItemEdited);
+  render(tripEventsContainer, RenderPosition.BEFOREEND, eventsList);
+};
+
+render(aboutTripContainer, RenderPosition.AFTERBEGIN, new TripInfo(tripInfo));
 clearInnerHTML(menuContainer);
-render(menuContainer, RenderPosition.AFTERBEGIN, new Menu().getElement());
-render(menuContainer, RenderPosition.BEFOREEND, new Filters().getElement());
+render(menuContainer, RenderPosition.AFTERBEGIN, new Menu());
+render(menuContainer, RenderPosition.BEFOREEND, new Filters());
 clearInnerHTML(tripEventsContainer);
-render(tripEventsContainer, RenderPosition.AFTERBEGIN, new Sort().getElement());
-render(tripEventsContainer, RenderPosition.BEFOREEND, new EventsList(tripEvents).getElement());
+render(tripEventsContainer, RenderPosition.AFTERBEGIN, new Sort());
+renderEventsList(tripEvents);
