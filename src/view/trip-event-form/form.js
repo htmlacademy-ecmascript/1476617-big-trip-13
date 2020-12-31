@@ -6,13 +6,13 @@ import TripEventPriceFieldGroup from './event-price-field-group';
 import TripEventDetails from './trip-event-details/trip-event-details';
 
 export default class TripEventForm extends AbstractComponent {
-  constructor({tripEvent}) {
+  constructor({eventData}) {
     super();
-    this._tripEvent = tripEvent;
+    this._eventData = eventData;
   }
 
   getTemplate() {
-    const {type, destination, price, description, photos, startDate, endDate, offers} = this._tripEvent;
+    const {type, destination, price, description, photos, startDate, endDate, offers} = this._eventData;
     return `<li class="trip-events__item">
              <form class="event event--edit" action="#" method="post">
                <header class="event__header">
@@ -34,10 +34,27 @@ export default class TripEventForm extends AbstractComponent {
            </li>`;
   }
 
-  setUnsetItemEditedHandler(unsetItemEditedHandler) {
-    this._callback.unsetItemEditedHandler = unsetItemEditedHandler;
-    this._element.addEventListener(`submit`, unsetItemEditedHandler);
-    this._element.addEventListener(`reset`, unsetItemEditedHandler);
-    this._element.querySelector(`.event__rollup-btn`).addEventListener(`click`, unsetItemEditedHandler);
+  setOnSubmitHandler(submitHandler) {
+    if (!this._element) {
+      this.getElement();
+    }
+    this._callback.submitHandler = submitHandler;
+    this._element.addEventListener(`submit`, submitHandler);
+  }
+
+  setOnResetHandler(resetHandler) {
+    if (!this._element) {
+      this.getElement();
+    }
+    this._callback.resetHandler = resetHandler;
+    this._element.addEventListener(`reset`, resetHandler);
+  }
+
+  setOnEventRollupButtonClickHandler(onEventRollupButtonClickHandler) {
+    if (!this._element) {
+      this.getElement();
+    }
+    this._callback.onEventRollupButtonClickHandler = onEventRollupButtonClickHandler;
+    this._element.querySelector(`.event__rollup-btn`).addEventListener(`click`, onEventRollupButtonClickHandler);
   }
 }

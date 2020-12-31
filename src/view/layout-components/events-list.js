@@ -1,33 +1,29 @@
-import {createElement} from '../../utils/render';
+import {createElement, render, RenderPosition} from '../../utils/render';
 import AbstractComponent from '../abstract-component';
 import TripEventItem from '../trip-event-item/event-item';
 
 export default class EventsList extends AbstractComponent {
-  constructor(tripEvents) {
+  constructor({eventsData}) {
     super();
-    this._tripEvents = tripEvents;
+    this._eventsData = eventsData;
+    this._eventComponents = this._eventsData.map((eventData) => new TripEventItem({eventData}));
     this._editedItemIndex = null;
   }
 
-  getTemplate({tripEvents}) {
-    return (tripEvents.length === 0)
+  getTemplate() {
+    const eventComponents = this._eventComponents;
+    return (eventComponents.length === 0)
       ? `<p class="trip-events__msg">Click New Event to create your first point</p>`
       : `<ul class="trip-events__list">
-          ${tripEvents.map((tripEvent) => tripEvent.getTemplate()).join(``)}
         </ul>`;
   }
 
   getElement() {
     if (!this._element) {
-      const tripEvents = this._tripEvents.map((tripEvent) => new TripEventItem({tripEvent}));
-      this._tripEventElements = tripEvents;
-      this._element = createElement(this.getTemplate({tripEvents}));
+      this._element = createElement(this.getTemplate());
+      render(this._element, RenderPosition.AFTERBEGIN, ...this._eventComponents);
     }
     return this._element;
-  }
-
-  getEditedItemIndex() {
-    return this._editedItemIndex;
   }
 
   setOnEscKeydownHandler(cb) {
@@ -35,16 +31,18 @@ export default class EventsList extends AbstractComponent {
     document.addEventListener(`keydown`, cb);
   }
 
-  setSetItemEdited(cb) {
-    if (!this._element) {
-      this.getElement();
-    }
-    this._tripEventElements.forEach(
-        (tripEventElement, index) => tripEventElement.setSetItemEditedListener(() => cb(index))
+  setToggleEventComponents(cb) {
+    this._callback.toggleEventComponent = cb;
+  }
+
+  setReplaceItemWithForm(cb) {
+    this._callback.replaceItemWithForm = cb;
+    this._eventComponents.forEach(
+        (tripEventElement, index) => tripEventElement.setOnRollupButtonClick(() => cb(index))
     );
   }
 
-  setUnsetItemEdited(cb) {
+  setReplaceFormWithItem(cb) {
     this._callback.unsetItemEdited = cb;
   }
 }

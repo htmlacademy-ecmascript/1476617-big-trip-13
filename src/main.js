@@ -60,40 +60,82 @@ const tripInfo = {
 };
 
 const renderEventsList = (eventsData) => {
-  const eventsList = new EventsList(eventsData);
+  // step 1. initializing events list component with events data
+  const eventsList = new EventsList({eventsData});
 
+  // step 2. declaring event handling functions
   const onEscKeyDownHandler = (function (evt) {
-    const editedItemIndex = this.getEditedItemIndex();
+    const editedItemIndex = this._editedItemIndex;
     if (editedItemIndex !== null && evt.key === `Esc` || evt.key === `Escape`) {
-      this.unsetItemEditedHandler(editedItemIndex);
+      replaceFormWithItem(editedItemIndex);
     }
   }).bind(eventsList);
 
-  const setItemEdited = (function (index) {
-    if (this._editedItemIndex !== null) {
-      this._callback.unsetItemEdited(this._editedItemIndex);
+  const replaceItemWithForm = (function (index) {
+    if (!this._element) {
+      this.getElement();
     }
 
+    // getting current item data
+    const eventData = this._eventsData[index];
+
+    // creating new and getting old elements
+    const eventFormComponent = new TripEventForm({eventData});
+    const eventItemElement = this._element.children[index];
+
+    // setting new elements handlers
+    eventFormComponent.setOnSubmitHandler(() => replaceFormWithItem(index));
+    eventFormComponent.setOnResetHandler(() => replaceFormWithItem(index));
+    eventFormComponent.setOnEventRollupButtonClickHandler(() => replaceFormWithItem(index));
+
+    // replacing components in both view and components inner data presentation
+    this._element.replaceChild(eventFormComponent.getElement(), eventItemElement);
+    this._eventComponents[index] = eventFormComponent;
+
+    // setting edited item index
     this._editedItemIndex = index;
-    const oldElement = this._element.children[index];
-    const newElement = new TripEventForm({tripEvent: this._tripEvents[index]}).getElement();
-    const unsetItemEditedHandler = () => {
-      this._callback.unsetItemEdited(index);
-    };
-    newElement.setUnsetItemEditedHandler(unsetItemEditedHandler);
-    this._element.replaceChild(newElement, oldElement);
-    console.log({newElement, oldElement});
+
   }).bind(eventsList);
 
-  const unsetItemEdited = (function (index) {
-    const oldElement = this._element.children[index];
-    const newElement = new TripEventItem({tripEvent: this._tripEvents[index], setItemEdited: () => this._callback.setItemEdited(index)}).getElement();
-    this._element.replaceChild(newElement, oldElement);
+  const replaceFormWithItem = (function (index) {
+    // getting current item data
+    const eventData = this._eventsData[index];
+
+    // creating new and getting old elements
+    const eventItemComponent = new TripEventItem({eventData});
+    const eventFormElement = this._element.children[index];
+
+    // setting new elements handlers
+    eventItemComponent.setOnRollupButtonClick(() => replaceItemWithForm(index));
+
+    // replacing components in both view and components inner data presentation
+    this._element.replaceChild(eventItemComponent.getElement(), eventFormElement);
+    this._eventComponents[index] = eventItemComponent;
+
+    // unsetting edited item index
+    this._editedItemIndex = null;
+
   }).bind(eventsList);
 
+
+  // TODO: check if this one is ever gonna be needed
+  const toggleEventComponent = (function (index) {
+    if (this._editedItemIndex) {
+      this._callback(this.setReplaceFormWithItem(this._editedItemIndex));
+    }
+
+    if (this._eventComponents[index] instanceof TripEventItem) {
+      this._callback.replaceItemWithForm(index);
+    } else {
+      this._callback.replaceFormWithItem(index);
+    }
+  }).bind(eventsList);
+
+  // step 3. assigning event handling functions to EventsList component
   eventsList.setOnEscKeydownHandler(onEscKeyDownHandler);
-  eventsList.setSetItemEdited(setItemEdited);
-  eventsList.setUnsetItemEdited(unsetItemEdited);
+  eventsList.setReplaceItemWithForm(replaceItemWithForm);
+  eventsList.setReplaceFormWithItem(replaceFormWithItem);
+  eventsList.setToggleEventComponents(toggleEventComponent);
   render(tripEventsContainer, RenderPosition.BEFOREEND, eventsList);
 };
 
