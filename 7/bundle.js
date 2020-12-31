@@ -246,40 +246,82 @@ const tripInfo = {
 };
 
 const renderEventsList = (eventsData) => {
-  const eventsList = new _view_layout_components_events_list__WEBPACK_IMPORTED_MODULE_9__["default"](eventsData);
+  // step 1. initializing events list component with events data
+  const eventsList = new _view_layout_components_events_list__WEBPACK_IMPORTED_MODULE_9__["default"]({eventsData});
 
+  // step 2. declaring event handling functions
   const onEscKeyDownHandler = (function (evt) {
-    const editedItemIndex = this.getEditedItemIndex();
+    const editedItemIndex = this._editedItemIndex;
     if (editedItemIndex !== null && evt.key === `Esc` || evt.key === `Escape`) {
-      this.unsetItemEditedHandler(editedItemIndex);
+      replaceFormWithItem(editedItemIndex);
     }
   }).bind(eventsList);
 
-  const setItemEdited = (function (index) {
-    if (this._editedItemIndex !== null) {
-      this._callback.unsetItemEdited(this._editedItemIndex);
+  const replaceItemWithForm = (function (index) {
+    if (!this._element) {
+      this.getElement();
     }
 
+    // getting current item data
+    const eventData = this._eventsData[index];
+
+    // creating new and getting old elements
+    const eventFormComponent = new _view_trip_event_form_form__WEBPACK_IMPORTED_MODULE_5__["default"]({eventData});
+    const eventItemElement = this._element.children[index];
+
+    // setting new elements handlers
+    eventFormComponent.setOnSubmitHandler(() => replaceFormWithItem(index));
+    eventFormComponent.setOnResetHandler(() => replaceFormWithItem(index));
+    eventFormComponent.setOnEventRollupButtonClickHandler(() => replaceFormWithItem(index));
+
+    // replacing components in both view and components inner data presentation
+    this._element.replaceChild(eventFormComponent.getElement(), eventItemElement);
+    this._eventComponents[index] = eventFormComponent;
+
+    // setting edited item index
     this._editedItemIndex = index;
-    const oldElement = this._element.children[index];
-    const newElement = new _view_trip_event_form_form__WEBPACK_IMPORTED_MODULE_5__["default"]({tripEvent: this._tripEvents[index]}).getElement();
-    const unsetItemEditedHandler = () => {
-      this._callback.unsetItemEdited(index);
-    };
-    newElement.setUnsetItemEditedHandler(unsetItemEditedHandler);
-    this._element.replaceChild(newElement, oldElement);
-    console.log({newElement, oldElement});
+
   }).bind(eventsList);
 
-  const unsetItemEdited = (function (index) {
-    const oldElement = this._element.children[index];
-    const newElement = new _view_trip_event_item_event_item__WEBPACK_IMPORTED_MODULE_4__["default"]({tripEvent: this._tripEvents[index], setItemEdited: () => this._callback.setItemEdited(index)}).getElement();
-    this._element.replaceChild(newElement, oldElement);
+  const replaceFormWithItem = (function (index) {
+    // getting current item data
+    const eventData = this._eventsData[index];
+
+    // creating new and getting old elements
+    const eventItemComponent = new _view_trip_event_item_event_item__WEBPACK_IMPORTED_MODULE_4__["default"]({eventData});
+    const eventFormElement = this._element.children[index];
+
+    // setting new elements handlers
+    eventItemComponent.setOnRollupButtonClick(() => replaceItemWithForm(index));
+
+    // replacing components in both view and components inner data presentation
+    this._element.replaceChild(eventItemComponent.getElement(), eventFormElement);
+    this._eventComponents[index] = eventItemComponent;
+
+    // unsetting edited item index
+    this._editedItemIndex = null;
+
   }).bind(eventsList);
 
+
+  // TODO: check if this one is ever gonna be needed
+  const toggleEventComponent = (function (index) {
+    if (this._editedItemIndex) {
+      this._callback(this.setReplaceFormWithItem(this._editedItemIndex));
+    }
+
+    if (this._eventComponents[index] instanceof _view_trip_event_item_event_item__WEBPACK_IMPORTED_MODULE_4__["default"]) {
+      this._callback.replaceItemWithForm(index);
+    } else {
+      this._callback.replaceFormWithItem(index);
+    }
+  }).bind(eventsList);
+
+  // step 3. assigning event handling functions to EventsList component
   eventsList.setOnEscKeydownHandler(onEscKeyDownHandler);
-  eventsList.setSetItemEdited(setItemEdited);
-  eventsList.setUnsetItemEdited(unsetItemEdited);
+  eventsList.setReplaceItemWithForm(replaceItemWithForm);
+  eventsList.setReplaceFormWithItem(replaceFormWithItem);
+  eventsList.setToggleEventComponents(toggleEventComponent);
   Object(_utils_render__WEBPACK_IMPORTED_MODULE_0__["render"])(tripEventsContainer, _utils_render__WEBPACK_IMPORTED_MODULE_0__["RenderPosition"].BEFOREEND, eventsList);
 };
 
@@ -546,31 +588,27 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class EventsList extends _abstract_component__WEBPACK_IMPORTED_MODULE_1__["default"] {
-  constructor(tripEvents) {
+  constructor({eventsData}) {
     super();
-    this._tripEvents = tripEvents;
+    this._eventsData = eventsData;
+    this._eventComponents = this._eventsData.map((eventData) => new _trip_event_item_event_item__WEBPACK_IMPORTED_MODULE_2__["default"]({eventData}));
     this._editedItemIndex = null;
   }
 
-  getTemplate({tripEvents}) {
-    return (tripEvents.length === 0)
+  getTemplate() {
+    const eventComponents = this._eventComponents;
+    return (eventComponents.length === 0)
       ? `<p class="trip-events__msg">Click New Event to create your first point</p>`
       : `<ul class="trip-events__list">
-          ${tripEvents.map((tripEvent) => tripEvent.getTemplate()).join(``)}
         </ul>`;
   }
 
   getElement() {
     if (!this._element) {
-      const tripEvents = this._tripEvents.map((tripEvent) => new _trip_event_item_event_item__WEBPACK_IMPORTED_MODULE_2__["default"]({tripEvent}));
-      this._tripEventElements = tripEvents;
-      this._element = Object(_utils_render__WEBPACK_IMPORTED_MODULE_0__["createElement"])(this.getTemplate({tripEvents}));
+      this._element = Object(_utils_render__WEBPACK_IMPORTED_MODULE_0__["createElement"])(this.getTemplate());
+      Object(_utils_render__WEBPACK_IMPORTED_MODULE_0__["render"])(this._element, _utils_render__WEBPACK_IMPORTED_MODULE_0__["RenderPosition"].AFTERBEGIN, ...this._eventComponents);
     }
     return this._element;
-  }
-
-  getEditedItemIndex() {
-    return this._editedItemIndex;
   }
 
   setOnEscKeydownHandler(cb) {
@@ -578,16 +616,18 @@ class EventsList extends _abstract_component__WEBPACK_IMPORTED_MODULE_1__["defau
     document.addEventListener(`keydown`, cb);
   }
 
-  setSetItemEdited(cb) {
-    if (!this._element) {
-      this.getElement();
-    }
-    this._tripEventElements.forEach(
-        (tripEventElement, index) => tripEventElement.setSetItemEditedListener(() => cb(index))
+  setToggleEventComponents(cb) {
+    this._callback.toggleEventComponent = cb;
+  }
+
+  setReplaceItemWithForm(cb) {
+    this._callback.replaceItemWithForm = cb;
+    this._eventComponents.forEach(
+        (tripEventElement, index) => tripEventElement.setOnRollupButtonClick(() => cb(index))
     );
   }
 
-  setUnsetItemEdited(cb) {
+  setReplaceFormWithItem(cb) {
     this._callback.unsetItemEdited = cb;
   }
 }
@@ -933,13 +973,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class TripEventForm extends _abstract_component__WEBPACK_IMPORTED_MODULE_0__["default"] {
-  constructor({tripEvent}) {
+  constructor({eventData}) {
     super();
-    this._tripEvent = tripEvent;
+    this._eventData = eventData;
   }
 
   getTemplate() {
-    const {type, destination, price, description, photos, startDate, endDate, offers} = this._tripEvent;
+    const {type, destination, price, description, photos, startDate, endDate, offers} = this._eventData;
     return `<li class="trip-events__item">
              <form class="event event--edit" action="#" method="post">
                <header class="event__header">
@@ -961,11 +1001,28 @@ class TripEventForm extends _abstract_component__WEBPACK_IMPORTED_MODULE_0__["de
            </li>`;
   }
 
-  setUnsetItemEditedHandler(unsetItemEditedHandler) {
-    this._callback.unsetItemEditedHandler = unsetItemEditedHandler;
-    this._element.addEventListener(`submit`, unsetItemEditedHandler);
-    this._element.addEventListener(`reset`, unsetItemEditedHandler);
-    this._element.querySelector(`.event__rollup-btn`).addEventListener(`click`, unsetItemEditedHandler);
+  setOnSubmitHandler(submitHandler) {
+    if (!this._element) {
+      this.getElement();
+    }
+    this._callback.submitHandler = submitHandler;
+    this._element.addEventListener(`submit`, submitHandler);
+  }
+
+  setOnResetHandler(resetHandler) {
+    if (!this._element) {
+      this.getElement();
+    }
+    this._callback.resetHandler = resetHandler;
+    this._element.addEventListener(`reset`, resetHandler);
+  }
+
+  setOnEventRollupButtonClickHandler(onEventRollupButtonClickHandler) {
+    if (!this._element) {
+      this.getElement();
+    }
+    this._callback.onEventRollupButtonClickHandler = onEventRollupButtonClickHandler;
+    this._element.querySelector(`.event__rollup-btn`).addEventListener(`click`, onEventRollupButtonClickHandler);
   }
 }
 
@@ -1112,13 +1169,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class TripEventItem extends _abstract_component__WEBPACK_IMPORTED_MODULE_0__["default"] {
-  constructor({tripEvent}) {
+  constructor({eventData}) {
     super();
-    this._tripEvent = tripEvent;
+    this._eventData = eventData;
   }
 
   getTemplate() {
-    const {type, destination, price, startDate, endDate, offers, isFavourite} = this._tripEvent;
+    const {type, destination, price, startDate, endDate, offers, isFavourite} = this._eventData;
     const isFavouriteClassName = isFavourite ? `event__favorite-btn--active` : ``;
     const startDateFormatted = startDate.format(`MMM D`);
     const lowerCaseType = type.toLowerCase();
@@ -1150,9 +1207,12 @@ class TripEventItem extends _abstract_component__WEBPACK_IMPORTED_MODULE_0__["de
             </li>`;
   }
 
-  setSetItemEditedListener(cb) {
+  setOnRollupButtonClick(cb) {
+    if (this._callback.setItemEdited) {
+      return;
+    }
     this._callback.setItemEdited = cb;
-    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => console.log(`button clicked`));
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, cb);
   }
 }
 
