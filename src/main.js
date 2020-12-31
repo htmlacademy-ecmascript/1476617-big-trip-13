@@ -1,4 +1,4 @@
-import {render, RenderPosition} from "./utils/render";
+import {render, RenderPosition, replace} from "./utils/render";
 
 import {generateTripEventItem} from "./mock/generate-trip-event-item";
 
@@ -89,7 +89,7 @@ const renderEventsList = (eventsData) => {
     eventFormComponent.setOnEventRollupButtonClickHandler(() => replaceFormWithItem(index));
 
     // replacing components in both view and components inner data presentation
-    this._element.replaceChild(eventFormComponent.getElement(), eventItemElement);
+    replace(eventFormComponent, eventItemElement);
     this._eventComponents[index] = eventFormComponent;
 
     // setting edited item index
@@ -109,7 +109,7 @@ const renderEventsList = (eventsData) => {
     eventItemComponent.setOnRollupButtonClick(() => replaceItemWithForm(index));
 
     // replacing components in both view and components inner data presentation
-    this._element.replaceChild(eventItemComponent.getElement(), eventFormElement);
+    replace(eventItemComponent, eventFormElement);
     this._eventComponents[index] = eventItemComponent;
 
     // unsetting edited item index

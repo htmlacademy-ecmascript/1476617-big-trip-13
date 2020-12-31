@@ -21,3 +21,21 @@ export const createElement = (template) => {
   div.innerHTML = template;
   return div.firstChild;
 };
+
+export const replace = (newChild, oldChild) => {
+  if (oldChild instanceof AbstractComponent) {
+    oldChild = oldChild.getElement();
+  }
+
+  if (newChild instanceof AbstractComponent) {
+    newChild = newChild.getElement();
+  }
+
+  const parent = oldChild.parentElement;
+
+  if (parent === null || oldChild === null || newChild === null) {
+    throw new Error(`One of the components objects does not have an existing element propepty in it`);
+  }
+
+  parent.replaceChild(newChild, oldChild);
+};
