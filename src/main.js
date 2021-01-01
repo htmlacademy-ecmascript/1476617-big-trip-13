@@ -1,16 +1,15 @@
 import {render, RenderPosition, replace} from "./utils/render";
 
-import {generateTripEventItem} from "./mock/generate-trip-event-item";
+import {generateTripEventItem} from "./mocks/generate-trip-event-item";
 
 import {getRandomInteger} from "./utils/common";
 
-import TripInfo from "./view/layout-components/trip-info";
-import TripEventItem from "./view/trip-event-item/event-item";
-import TripEventForm from "./view/trip-event-form/form";
-import Menu from "./view/layout-components/menu";
-import Filters from "./view/layout-components/filters";
-import Sort from "./view/layout-components/sort";
-import EventsList from "./view/layout-components/events-list";
+import EventsListPresenter from './presenters/events-list';
+
+import TripInfoView from "./views/layout-components/trip-info";
+import MenuView from "./views/layout-components/menu";
+import FiltersView from "./views/layout-components/filters";
+import SortView from "./views/layout-components/sort";
 
 const MIN_EVENTS_AMOUNT = 15;
 const MAX_EVENTS_AMOUNT = 20;
@@ -59,90 +58,21 @@ const tripInfo = {
   endDate: getEndDate(tripEvents),
 };
 
-const renderEventsList = (eventsData) => {
-  // step 1. initializing events list component with events data
-  const eventsList = new EventsList({eventsData});
-
-  // step 2. declaring event handling functions
-  const onEscKeyDownHandler = (function (evt) {
-    const editedItemIndex = this._editedItemIndex;
-    if (editedItemIndex !== null && evt.key === `Esc` || evt.key === `Escape`) {
-      replaceFormWithItem(editedItemIndex);
-    }
-  }).bind(eventsList);
-
-  const replaceItemWithForm = (function (index) {
-    if (!this._element) {
-      this.getElement();
-    }
-
-    // getting current item data
-    const eventData = this._eventsData[index];
-
-    // creating new and getting old elements
-    const eventFormComponent = new TripEventForm({eventData});
-    const eventItemElement = this._element.children[index];
-
-    // setting new elements handlers
-    eventFormComponent.setOnSubmitHandler(() => replaceFormWithItem(index));
-    eventFormComponent.setOnResetHandler(() => replaceFormWithItem(index));
-    eventFormComponent.setOnEventRollupButtonClickHandler(() => replaceFormWithItem(index));
-
-    // replacing components in both view and components inner data presentation
-    replace(eventFormComponent, eventItemElement);
-    this._eventComponents[index] = eventFormComponent;
-
-    // setting edited item index
-    this._editedItemIndex = index;
-
-  }).bind(eventsList);
-
-  const replaceFormWithItem = (function (index) {
-    // getting current item data
-    const eventData = this._eventsData[index];
-
-    // creating new and getting old elements
-    const eventItemComponent = new TripEventItem({eventData});
-    const eventFormElement = this._element.children[index];
-
-    // setting new elements handlers
-    eventItemComponent.setOnRollupButtonClick(() => replaceItemWithForm(index));
-
-    // replacing components in both view and components inner data presentation
-    replace(eventItemComponent, eventFormElement);
-    this._eventComponents[index] = eventItemComponent;
-
-    // unsetting edited item index
-    this._editedItemIndex = null;
-
-  }).bind(eventsList);
-
-
-  // TODO: check if this one is ever gonna be needed
-  const toggleEventComponent = (function (index) {
-    if (this._editedItemIndex) {
-      this._callback(this.setReplaceFormWithItem(this._editedItemIndex));
-    }
-
-    if (this._eventComponents[index] instanceof TripEventItem) {
-      this._callback.replaceItemWithForm(index);
-    } else {
-      this._callback.replaceFormWithItem(index);
-    }
-  }).bind(eventsList);
-
-  // step 3. assigning event handling functions to EventsList component
-  eventsList.setOnEscKeydownHandler(onEscKeyDownHandler);
-  eventsList.setReplaceItemWithForm(replaceItemWithForm);
-  eventsList.setReplaceFormWithItem(replaceFormWithItem);
-  eventsList.setToggleEventComponents(toggleEventComponent);
-  render(tripEventsContainer, RenderPosition.BEFOREEND, eventsList);
+const renderEventsList = (events) => {
+  // // step 3. assigning event handling functions to EventsList component
+  // eventsList.setOnEscKeydownHandler(onEscKeyDownHandler);
+  // eventsList.setReplaceItemWithForm(replaceItemWithForm);
+  // eventsList.setReplaceFormWithItem(replaceFormWithItem);
+  // eventsList.setToggleEventComponents(toggleEventComponent);
+  // render(tripEventsContainer, RenderPosition.BEFOREEND, eventsList);
 };
 
-render(aboutTripContainer, RenderPosition.AFTERBEGIN, new TripInfo(tripInfo));
+render(aboutTripContainer, RenderPosition.AFTERBEGIN, new TripInfoView(tripInfo));
 clearInnerHTML(menuContainer);
-render(menuContainer, RenderPosition.AFTERBEGIN, new Menu());
-render(menuContainer, RenderPosition.BEFOREEND, new Filters());
+render(menuContainer, RenderPosition.AFTERBEGIN, new MenuView());
+render(menuContainer, RenderPosition.BEFOREEND, new FiltersView());
 clearInnerHTML(tripEventsContainer);
-render(tripEventsContainer, RenderPosition.AFTERBEGIN, new Sort());
-renderEventsList(tripEvents);
+render(tripEventsContainer, RenderPosition.AFTERBEGIN, new SortView());
+// renderEventsList(tripEvents);
+const eventsList = new EventsListPresenter({container: tripEventsContainer});
+eventsList.init({events: tripEvents});

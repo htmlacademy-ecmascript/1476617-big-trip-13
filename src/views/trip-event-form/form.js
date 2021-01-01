@@ -6,13 +6,13 @@ import TripEventPriceFieldGroup from './event-price-field-group';
 import TripEventDetails from './trip-event-details/trip-event-details';
 
 export default class TripEventForm extends AbstractComponent {
-  constructor({eventData}) {
+  constructor({event}) {
     super();
-    this._eventData = eventData;
+    this._event = event;
   }
 
   getTemplate() {
-    const {type, destination, price, description, photos, startDate, endDate, offers} = this._eventData;
+    const {type, destination, price, description, photos, startDate, endDate, offers} = this._event;
     return `<li class="trip-events__item">
              <form class="event event--edit" action="#" method="post">
                <header class="event__header">

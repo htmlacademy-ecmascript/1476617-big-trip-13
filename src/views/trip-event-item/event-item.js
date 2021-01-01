@@ -6,13 +6,13 @@ import EventPrice from './price';
 import AddToFavouritesButton from './add-to-favourites-button';
 
 export default class TripEventItem extends AbstractComponent {
-  constructor({eventData}) {
+  constructor({event}) {
     super();
-    this._eventData = eventData;
+    this._event = event;
   }
 
   getTemplate() {
-    const {type, destination, price, startDate, endDate, offers, isFavourite} = this._eventData;
+    const {type, destination, price, startDate, endDate, offers, isFavourite} = this._event;
     const isFavouriteClassName = isFavourite ? `event__favorite-btn--active` : ``;
     const startDateFormatted = startDate.format(`MMM D`);
     const lowerCaseType = type.toLowerCase();
@@ -44,11 +44,11 @@ export default class TripEventItem extends AbstractComponent {
             </li>`;
   }
 
-  setOnRollupButtonClick(cb) {
-    if (this._callback.setItemEdited) {
+  setOnRollupButtonClickHandler(cb) {
+    if (this._callbacks.setItemEdited) {
       return;
     }
-    this._callback.setItemEdited = cb;
+    this._callbacks.setItemEdited = cb;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, cb);
   }
 }
