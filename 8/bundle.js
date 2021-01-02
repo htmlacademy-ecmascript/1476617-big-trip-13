@@ -520,7 +520,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const Modes = {
   DEFAULT: `DEFAULT`,
-  EDITING: `EDITING`
+  EDITING: `EDITING`,
 };
 
 const EmittingActions = {
@@ -530,7 +530,7 @@ const EmittingActions = {
 
 const RecievingActions = {
   UPDATE_IS_FAVOURITE: `UPDATE_IS_FAVOURITE`,
-}
+};
 
 class EventsItemPresenter extends _abstract_presenter__WEBPACK_IMPORTED_MODULE_1__["default"] {
   constructor({container}) {
@@ -558,7 +558,7 @@ class EventsItemPresenter extends _abstract_presenter__WEBPACK_IMPORTED_MODULE_1
     Object(_utils_render__WEBPACK_IMPORTED_MODULE_0__["render"])(this._container, _utils_render__WEBPACK_IMPORTED_MODULE_0__["RenderPosition"].BEFOREEND, this._view);
   }
 
-  update({ event }) {
+  update({event}) {
     this._event = event;
   }
 
@@ -614,7 +614,9 @@ class EventsItemPresenter extends _abstract_presenter__WEBPACK_IMPORTED_MODULE_1
   }
 
   _setIsFavourite() {
-    this._event = {...this._event, isFavourite: !this._event.isFavourite};
+    const newEvent = Object.assign({}, this._event);
+    newEvent.isFavourite = this._event.isFavourite;
+    this._event = newEvent;
     this._notifySubscribers(EmittingActions.EVENT_UPDATE);
   }
 }
