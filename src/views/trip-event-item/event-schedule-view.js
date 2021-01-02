@@ -1,10 +1,10 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
 const getTimeDifference = (minutes) => {
   return `${Math.floor(minutes / 60)}H ${minutes % 60}M`;
 };
 
-export default class EventSchedule extends AbstractComponent {
+export default class EventScheduleView extends AbstractView {
   constructor(eventDates) {
     super();
     this._eventDates = eventDates;

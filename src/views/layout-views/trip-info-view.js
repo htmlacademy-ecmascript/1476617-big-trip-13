@@ -1,13 +1,13 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-export default class TripInfo extends AbstractComponent {
-  constructor(tripInfo) {
+export default class TripInfoView extends AbstractView {
+  constructor({trip}) {
     super();
-    this._tripInfo = tripInfo;
+    this._trip = trip;
   }
 
   getTemplate() {
-    const {route, price, startDate, endDate} = this._tripInfo;
+    const {route, price, startDate, endDate} = this._trip;
     return `<section class="trip-main__trip-info  trip-info">
             <div class="trip-info__main">
               <h1 class="trip-info__title">${route.join(` &mdash; `)}</h1>

@@ -1,6 +1,6 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-export default class Filters extends AbstractComponent {
+export default class FiltersView extends AbstractView {
   getTemplate() {
     return `<div>
              <h2 class="visually-hidden">Filter events</h2>

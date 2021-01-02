@@ -1,6 +1,6 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-export default class Sort extends AbstractComponent {
+export default class SortView extends AbstractView {
   getTemplate() {
     return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
              <div class="trip-sort__item  trip-sort__item--day">

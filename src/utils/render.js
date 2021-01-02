@@ -1,4 +1,4 @@
-import AbstractComponent from '../views/abstract-component';
+import AbstractComponent from '../views/abstract-view';
 
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
@@ -47,4 +47,10 @@ export const remove = (component) => {
 
   component.getElement().remove();
   component.removeElement();
+};
+
+export const clearInnerHTML = (...containers) => {
+  for (const container of containers) {
+    container.innerHTML = ``;
+  }
 };

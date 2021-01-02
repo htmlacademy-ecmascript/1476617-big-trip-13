@@ -1,6 +1,6 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-export default class EventPrice extends AbstractComponent {
+export default class EventPriceView extends AbstractView {
   constructor({price}) {
     super();
     this._price = price;

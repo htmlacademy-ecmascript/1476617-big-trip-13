@@ -1,11 +1,11 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-import OffersList from './offers-list';
-import EventSchedule from './event-schedule';
-import EventPrice from './price';
-import AddToFavouritesButton from './add-to-favourites-button';
+import OffersListView from './offers-list-view';
+import EventScheduleView from './event-schedule-view';
+import EventPriceView from './price-view';
+import AddToFavouritesButtonView from './add-to-favourites-button-view';
 
-export default class TripEventItem extends AbstractComponent {
+export default class TripEventItemView extends AbstractView {
   constructor({event}) {
     super();
     this._event = event;
@@ -28,13 +28,13 @@ export default class TripEventItem extends AbstractComponent {
 
                 <h3 class="event__title">${type} ${destination}</h3>
 
-                ${new EventSchedule({startDate, endDate}).getTemplate()}
-                ${new EventPrice({price}).getTemplate()}
+                ${new EventScheduleView({startDate, endDate}).getTemplate()}
+                ${new EventPriceView({price}).getTemplate()}
 
                 <h4 class="visually-hidden">Offers:</h4>
 
-                ${new OffersList({offers}).getTemplate()}
-                ${new AddToFavouritesButton({isFavouriteClassName}).getTemplate()}
+                ${new OffersListView({offers}).getTemplate()}
+                ${new AddToFavouritesButtonView({isFavouriteClassName}).getTemplate()}
 
                 <button class="event__rollup-btn" type="button">
                   <span class="visually-hidden">Open event</span>
@@ -45,10 +45,16 @@ export default class TripEventItem extends AbstractComponent {
   }
 
   setOnRollupButtonClickHandler(cb) {
-    if (this._callbacks.setItemEdited) {
-      return;
-    }
-    this._callbacks.setItemEdited = cb;
+    this._callbacks.onRollupButtonClickHandler = cb;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, cb);
+  }
+
+  setOnFavouriteButtonClickHandler(cb) {
+    const onFavouriteButtonClickHandler = () => {
+      cb();
+      this.getElement().querySelector(`.event__favorite-btn`).classList.toggle(`event__favorite-btn--active`);
+    };
+    this._callbacks.onFavouriteButtonClickHandler = onFavouriteButtonClickHandler;
+    this.getElement().querySelector(`.event__favorite-btn `).addEventListener(`click`, onFavouriteButtonClickHandler);
   }
 }

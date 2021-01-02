@@ -1,6 +1,6 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-export default class TripEventPriceFieldGroup extends AbstractComponent {
+export default class TripEventPriceFieldGroupView extends AbstractView {
   constructor(price) {
     super();
     this._price = price;

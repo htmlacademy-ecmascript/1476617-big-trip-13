@@ -1,6 +1,6 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-export default class TripEventDestinationGroup extends AbstractComponent {
+export default class TripEventDestinationGroupView extends AbstractView {
   constructor(destinationGroup) {
     super();
     this._destinationGroup = destinationGroup;

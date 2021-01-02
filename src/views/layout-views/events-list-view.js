@@ -1,6 +1,6 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-export default class EventsList extends AbstractComponent {
+export default class EventsListView extends AbstractView {
   constructor({events}) {
     super();
     this._events = events;

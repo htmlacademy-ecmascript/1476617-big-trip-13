@@ -1,6 +1,6 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-export default class TripEventTimeGroup extends AbstractComponent {
+export default class TripEventTimeGroupView extends AbstractView {
   constructor(time) {
     super();
     this._time = time;
