@@ -6,7 +6,7 @@ import EventFormView from "../views/trip-event-form/form-view";
 
 export const Modes = {
   DEFAULT: `DEFAULT`,
-  EDITING: `EDITING`
+  EDITING: `EDITING`,
 };
 
 export const EmittingActions = {
@@ -16,7 +16,7 @@ export const EmittingActions = {
 
 export const RecievingActions = {
   UPDATE_IS_FAVOURITE: `UPDATE_IS_FAVOURITE`,
-}
+};
 
 export default class EventsItemPresenter extends AbstractPresenter {
   constructor({container}) {
@@ -44,7 +44,7 @@ export default class EventsItemPresenter extends AbstractPresenter {
     render(this._container, RenderPosition.BEFOREEND, this._view);
   }
 
-  update({ event }) {
+  update({event}) {
     this._event = event;
   }
 
@@ -100,7 +100,9 @@ export default class EventsItemPresenter extends AbstractPresenter {
   }
 
   _setIsFavourite() {
-    this._event = {...this._event, isFavourite: !this._event.isFavourite};
+    const newEvent = Object.assign({}, this._event);
+    newEvent.isFavourite = this._event.isFavourite;
+    this._event = newEvent;
     this._notifySubscribers(EmittingActions.EVENT_UPDATE);
   }
 }
