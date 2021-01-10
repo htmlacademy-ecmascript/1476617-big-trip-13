@@ -1,12 +1,13 @@
-import {createElement} from '../../utils';
+import AbstractComponent from '../abstract-component';
 
-export default class OffersListMarkup {
+export default class OffersListMarkup extends AbstractComponent {
   constructor({offers}) {
+    super();
     this._offers = offers;
-    this._element = null;
   }
 
-  getTemplate({offers}) {
+  getTemplate() {
+    const offers = this._offers;
     return `<ul class="event__selected-offers">
              ${offers.map(({isSelected, title, price}) => isSelected ? `
                <li class="event__offer">
@@ -15,17 +16,5 @@ export default class OffersListMarkup {
                  <span class="event__offer-price">${price}</span>
                </li>` : ``).join(``)}
            </ul>`;
-  }
-
-  getElement() {
-    if (!this._element) {
-      const offers = this._offers;
-      this._element = createElement(this.getTemplate({offers}));
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

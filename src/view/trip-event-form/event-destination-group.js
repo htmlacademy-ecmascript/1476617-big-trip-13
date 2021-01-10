@@ -1,12 +1,13 @@
-import {createElement} from '../../utils';
+import AbstractComponent from '../abstract-component';
 
-export default class TripEventDestinationGroup {
+export default class TripEventDestinationGroup extends AbstractComponent {
   constructor(destinationGroup) {
+    super();
     this._destinationGroup = destinationGroup;
-    this._element = null;
   }
 
-  getTemplate({type, destination}) {
+  getTemplate() {
+    const {type, destination} = this._destinationGroup;
     return `<div class="event__field-group  event__field-group--destination">
              <label class="event__label  event__type-output" for="event-destination-1">
                ${type}
@@ -18,17 +19,5 @@ export default class TripEventDestinationGroup {
                <option value="Chamonix"></option>
              </datalist>
            </div>`;
-  }
-
-  getElement() {
-    if (!this._element) {
-      const {type, destination} = this._destinationGroup;
-      this._element = createElement(this.getTemplate({type, destination}));
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
