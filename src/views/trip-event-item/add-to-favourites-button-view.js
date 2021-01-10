@@ -1,6 +1,6 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-export default class AddToFavouritesButton extends AbstractComponent {
+export default class AddToFavouritesButtonView extends AbstractView {
   constructor(addToFavouritesButton) {
     super();
     this._addToFavouritesButton = addToFavouritesButton;

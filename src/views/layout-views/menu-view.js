@@ -1,6 +1,6 @@
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-export default class Menu extends AbstractComponent {
+export default class MenuView extends AbstractView {
   getTemplate() {
     return `<div class="trip-main__trip-controls  trip-controls">
              <h2 class="visually-hidden">Switch trip view</h2>

@@ -1,7 +1,7 @@
 import {TRIP_EVENT_TYPES} from '../../const';
-import AbstractComponent from '../abstract-component';
+import AbstractView from '../abstract-view';
 
-export default class TripEventTypeGroup extends AbstractComponent {
+export default class TripEventTypeGroupView extends AbstractView {
   constructor(event) {
     super();
     this._event = event;

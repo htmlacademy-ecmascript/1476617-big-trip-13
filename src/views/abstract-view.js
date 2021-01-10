@@ -1,13 +1,12 @@
 import {createElement} from "../utils/render.js";
 
-export default class AbstractComponent {
+export default class AbstractView {
   constructor() {
-    if (new.target === AbstractComponent) {
-      throw new Error(`AbstractComponent should be extended and cannot be instantiated`);
+    if (new.target === AbstractView) {
+      throw new Error(`AbstractView should be extended and cannot be instantiated`);
     }
-
     this._element = null;
-    this._callback = {};
+    this._callbacks = {};
   }
 
   getTemplate() {

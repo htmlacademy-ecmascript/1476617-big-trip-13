@@ -1,8 +1,8 @@
-import AbstractComponent from '../../abstract-component';
+import AbstractView from '../../abstract-view';
 
-import Offer from './offer';
+import OfferView from './offer-view';
 
-export default class TripEventDetails extends AbstractComponent {
+export default class TripEventDetailsView extends AbstractView {
   constructor(tripEventDetails) {
     super();
     this._tripEventDetails = tripEventDetails;
@@ -14,7 +14,7 @@ export default class TripEventDetails extends AbstractComponent {
              <section class="event__section  event__section--offers">
                <h3 class="event__section-title  event__section-title--offers">Offers</h3>
                <div class="event__available-offers">
-                 ${offers.map((offer) => new Offer(offer).getTemplate()).join(``)}
+                 ${offers.map((offer) => new OfferView(offer).getTemplate()).join(``)}
                </div>
              </section>
 

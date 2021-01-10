@@ -1,3 +1,4 @@
+import {nanoid} from 'nanoid';
 import dayjs from 'dayjs';
 
 import {getRandomInteger, getRandomArrayItem} from '../utils/common';
@@ -31,12 +32,14 @@ const getRandomPrice = (minPrice, maxPrice) => {
 };
 
 const generateOffer = () => {
+  const id = nanoid();
   const type = getRandomArrayItem(TRIP_EVENT_TYPES);
   const [name, title] = getRandomArrayItem(Object.entries(OFFER_TYPES));
   const price = getRandomPrice(MIN_OFFER_PRICE, MAX_OFFER_PRICE);
   const isSelected = Boolean(getRandomInteger(0, 1));
 
   return {
+    id,
     type,
     name,
     title,
@@ -84,25 +87,35 @@ const getRandomDates = () => {
   };
 };
 
-export const generateTripEventItem = () => {
-  const type = getRandomArrayItem(TRIP_EVENT_TYPES);
-  const destination = getRandomArrayItem(DESTINATIONS);
-  const price = getRandomPrice(MIN_EVENT_PRICE, MAX_EVENT_PRICE);
-  const description = generateDescription();
-  const photos = getRandomPhotos();
-  const {startDate, endDate} = getRandomDates();
-  const offers = generateOffers();
-  const isFavourite = getIsFavourite();
+export const generateTripEvents = () => {
+  const MIN_EVENTS_AMOUNT = 15;
+  const MAX_EVENTS_AMOUNT = 20;
 
-  return {
-    type,
-    destination,
-    price,
-    description,
-    photos,
-    startDate,
-    endDate,
-    offers,
-    isFavourite
+  const generateTripEventItem = () => {
+    const type = getRandomArrayItem(TRIP_EVENT_TYPES);
+    const destination = getRandomArrayItem(DESTINATIONS);
+    const price = getRandomPrice(MIN_EVENT_PRICE, MAX_EVENT_PRICE);
+    const description = generateDescription();
+    const photos = getRandomPhotos();
+    const {startDate, endDate} = getRandomDates();
+    const offers = generateOffers();
+    const isFavourite = getIsFavourite();
+
+    return {
+      type,
+      destination,
+      price,
+      description,
+      photos,
+      startDate,
+      endDate,
+      offers,
+      isFavourite
+    };
   };
+
+  const eventsAmount = getRandomInteger(MIN_EVENTS_AMOUNT, MAX_EVENTS_AMOUNT);
+  const tripEvents = new Array(eventsAmount).fill().map(generateTripEventItem);
+  tripEvents.sort((event1, event2) => event1.startDate - event2.startDate);
+  return tripEvents;
 };
